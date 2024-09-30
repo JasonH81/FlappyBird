@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -19,6 +20,7 @@ public class FlightPanel extends JPanel {
 	private FlappyBird flappyBird;
 	private Bird bird = new Bird(HEIGHT);
 	private Timer timer;
+	private ArrayList<Wall> walls = new ArrayList<Wall>();
 	
 	public FlightPanel(FlappyBird flappyBird) {
 		this.flappyBird = flappyBird;
@@ -44,6 +46,9 @@ public class FlightPanel extends JPanel {
 			}
 		});
 		
+		Wall wall = new Wall();
+		walls.add(wall);
+		
 		timer.start();
 	}
 	
@@ -61,6 +66,10 @@ public class FlightPanel extends JPanel {
 		bird.draw(g);
 		
 		// walls
+		for (int i = 0; i<walls.size(); i++) {
+			Wall wall = walls.get(i);
+			wall.draw(g);
+		}
 	}
 	
 	private void timedAction() {
@@ -68,7 +77,14 @@ public class FlightPanel extends JPanel {
 		bird.move();
 		
 		// move walls
-		
+		for (int i=0; i<walls.size(); i++) {
+			Wall wall = walls.get(i);
+			wall.move();
+			
+			if (wall.isPastWindowEdge()) {
+				walls.remove(i);
+			}
+		}
 		
 		// check for collision
 		
