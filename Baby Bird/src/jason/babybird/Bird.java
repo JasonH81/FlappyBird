@@ -1,6 +1,7 @@
 package jason.babybird;
 
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import jason.mycommonmethods.FileIO;
@@ -68,5 +69,10 @@ public class Bird {
 		else {
 			flap = FLAP_GLIDE;
 		}
+	}
+	
+	public Rectangle getBounds() {
+		Rectangle bounds = new Rectangle(x,y,width,height);
+		return bounds;
 	}
 }

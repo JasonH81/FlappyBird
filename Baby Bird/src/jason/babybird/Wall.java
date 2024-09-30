@@ -2,7 +2,9 @@ package jason.babybird;
 
 import java.awt.Color;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.util.Random;
 
 import jason.mycommonmethods.FileIO;
 
@@ -21,6 +23,11 @@ public class Wall {
 	private BufferedImage bottomImage;
 	
 	private static final int CHANGE_X = -10;
+	private static final int TOP_MIN = 100;
+	private static final int TOP_MAX = 300;
+	private static final int GAP_MIN = 100;
+	private static final int GAP_MAX = 240;
+	private Random rand = new Random();
 	
 	public Wall() {
 		if (wallImage == null) {
@@ -29,8 +36,13 @@ public class Wall {
 			height = wallImage.getHeight();
 		}
 		
-		topHeight = 100;
-		int gap = 150;
+		int range = GAP_MAX-GAP_MIN;
+		int pick = rand.nextInt(range);
+		int gap = pick + GAP_MIN;
+		
+		range = TOP_MAX - TOP_MIN;
+		pick = rand.nextInt(range);
+		topHeight = pick + TOP_MIN;
 		
 		bottomY = topHeight+gap;
 		bottomHeight = FlightPanel.HEIGHT - bottomY;
@@ -57,6 +69,16 @@ public class Wall {
 	public boolean isPastWindowEdge() {
 		int rightEdgeX = x + width;
 		return rightEdgeX < 0;
+	}
+	
+	public Rectangle getTopBounds() {
+		Rectangle bounds = new Rectangle(x, 0, width, topHeight);
+		return bounds;
+	}
+	
+	public Rectangle getBottomBounds() {
+		Rectangle bounds = new Rectangle(x, bottomY, width, bottomHeight);
+		return bounds;
 	}
 	
 }

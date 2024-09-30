@@ -3,6 +3,7 @@ package jason.babybird;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -16,11 +17,13 @@ public class FlightPanel extends JPanel {
 	
 	public static final int WIDTH = 600;
 	public static final int HEIGHT = 600;
+	private static final int SEPARATION = 40;
 	
 	private FlappyBird flappyBird;
 	private Bird bird = new Bird(HEIGHT);
 	private Timer timer;
 	private ArrayList<Wall> walls = new ArrayList<Wall>();
+	private int count = 0;
 	
 	public FlightPanel(FlappyBird flappyBird) {
 		this.flappyBird = flappyBird;
@@ -87,13 +90,29 @@ public class FlightPanel extends JPanel {
 		}
 		
 		// check for collision
+		Wall firstWall = walls.get(0);
+		Rectangle birdBounds = bird.getBounds();
+		Rectangle topWallBounds = firstWall.getTopBounds();
+		Rectangle bottomWallBounds = firstWall.getBottomBounds();
 		
+		if (birdBounds.intersects(topWallBounds) || birdBounds.intersects(bottomWallBounds)) {
+			timer.stop();
+		}
 		
 		// should another wall be added?
-		
+		count++;
+		if (count>SEPARATION) {
+			Wall wall = new Wall();
+			walls.add(wall);
+			count = 0;
+		}
 		
 		// repaint
 		repaint();
+	}
+	
+	public Bird getBird() {
+		return bird;
 	}
 
 }
