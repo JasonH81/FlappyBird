@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -64,7 +65,19 @@ public class FlappyBird extends JFrame {
 	}
 	
 	public void nextBird() {
-		birdNestPanel.removeBird();
+		int birdsRemaining = birdNestPanel.removeBird();
+		if (birdsRemaining<0) {
+			String message = "No more lives remain! Would you like to play again?";
+			int option = JOptionPane.showConfirmDialog(this, message, "Play Again?", JOptionPane.YES_NO_OPTION);
+			if (option == JOptionPane.YES_OPTION) {
+				birdNestPanel.setBirdCount(LIVES-1);
+				scorePanel.reset();
+				flightPanel.restart();
+			}
+			else {
+				System.exit(0);
+			}
+		}
 	}
 	
 	public void addToScore(int points) {

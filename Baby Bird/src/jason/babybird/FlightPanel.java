@@ -52,7 +52,7 @@ public class FlightPanel extends JPanel {
 		});
 		
 		// timer 
-		timer = new Timer(40, new ActionListener() {
+		timer = new Timer(1, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				timedAction();
 			}
@@ -86,12 +86,30 @@ public class FlightPanel extends JPanel {
 	
 	private void timedAction() {
 		// move bird
+		int changeY = bird.getChangeY();
 		bird.move();
+		
+		int paintX = bird.getX();
+		int paintY = bird.getY();
+		
+		if (changeY>0) {
+			paintY -= changeY;
+		}
+		
+		int paintWidth = bird.getWidth();
+		int paintHeight = (bird.getHeight() + Math.abs(changeY));
+		repaint(paintX, paintY, paintWidth, paintHeight);
 		
 		// move walls
 		for (int i=0; i<walls.size(); i++) {
 			Wall wall = walls.get(i);
 			wall.move();
+			paintX = wall.getX();
+			paintY = wall.getY();
+			paintWidth = (wall.getWidth()-wall.getChangeX());
+			paintHeight = HEIGHT;
+			
+			repaint(paintX, paintY, paintWidth, paintHeight);
 			
 			if (wall.isPastWindowEdge()) {
 				walls.remove(i);
@@ -117,9 +135,6 @@ public class FlightPanel extends JPanel {
 			walls.add(wall);
 			count = 0;
 		}
-		
-		// repaint
-		repaint();
 	}
 	
 	public Bird getBird() {
@@ -133,6 +148,17 @@ public class FlightPanel extends JPanel {
 		walls.clear();
 		Wall wall = new Wall(fm);
 		walls.add(wall);
+		
+		repaint();
+	}
+	
+	public void restart() {
+		count = 0;
+		bird = new Bird(HEIGHT);
+		walls.clear();
+		Wall wall = new Wall(fm);
+		walls.add(wall);
+		repaint();
 	}
 
 }
