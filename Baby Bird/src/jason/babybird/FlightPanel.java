@@ -2,6 +2,8 @@ package jason.babybird;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -13,20 +15,27 @@ import java.util.ArrayList;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
+import jason.mycommonmethods.FileIO;
+
 public class FlightPanel extends JPanel {
 	
 	public static final int WIDTH = 600;
 	public static final int HEIGHT = 600;
 	private static final int SEPARATION = 40;
+	private static final Font BIG_FONT = new Font(Font.DIALOG, Font.BOLD, 30);
+	private static final String THUD_SOUND = "/thud.wav";
 	
 	private FlappyBird flappyBird;
 	private Bird bird = new Bird(HEIGHT);
 	private Timer timer;
 	private ArrayList<Wall> walls = new ArrayList<Wall>();
 	private int count = 0;
+	private FontMetrics fm;
 	
 	public FlightPanel(FlappyBird flappyBird) {
 		this.flappyBird = flappyBird;
+		setFont(BIG_FONT);
+		fm = getFontMetrics(BIG_FONT);
 		
 		setFocusable(true);
 		requestFocusInWindow();
@@ -49,7 +58,7 @@ public class FlightPanel extends JPanel {
 			}
 		});
 		
-		Wall wall = new Wall();
+		Wall wall = new Wall(fm);
 		walls.add(wall);
 		
 		timer.start();
@@ -86,6 +95,8 @@ public class FlightPanel extends JPanel {
 			
 			if (wall.isPastWindowEdge()) {
 				walls.remove(i);
+				int points = wall.getPoints();
+				flappyBird.addToScore(points);
 			}
 		}
 		
@@ -96,13 +107,13 @@ public class FlightPanel extends JPanel {
 		Rectangle bottomWallBounds = firstWall.getBottomBounds();
 		
 		if (birdBounds.intersects(topWallBounds) || birdBounds.intersects(bottomWallBounds)) {
-			timer.stop();
+			nextLife();
 		}
 		
 		// should another wall be added?
 		count++;
 		if (count>SEPARATION) {
-			Wall wall = new Wall();
+			Wall wall = new Wall(fm);
 			walls.add(wall);
 			count = 0;
 		}
@@ -113,6 +124,15 @@ public class FlightPanel extends JPanel {
 	
 	public Bird getBird() {
 		return bird;
+	}
+	
+	private void nextLife() {
+		FileIO.playClip(this, THUD_SOUND);
+		flappyBird.nextBird();
+		count = 0;
+		walls.clear();
+		Wall wall = new Wall(fm);
+		walls.add(wall);
 	}
 
 }

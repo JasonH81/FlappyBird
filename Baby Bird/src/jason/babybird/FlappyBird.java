@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -17,9 +18,11 @@ import jason.mycomponents.TitleLabel;
 public class FlappyBird extends JFrame {
 	
 	private static final long serialVersionUID = 1L;
+	private static final int LIVES = 4;
 	
 	private ScorePanel scorePanel = new ScorePanel(0, Color.GREEN);
 	private FlightPanel flightPanel = new FlightPanel(this);
+	private BirdNestPanel birdNestPanel;
 	
 	public FlappyBird() {
 		initGUI();
@@ -49,11 +52,23 @@ public class FlappyBird extends JFrame {
 		mainPanel.add(flightPanel);
 		
 		// bottom panel
-		
+		JPanel bottomPanel = new JPanel();
+		bottomPanel.setBackground(Color.BLACK);
+		add(bottomPanel, BorderLayout.PAGE_END);
 		
 		// nest panel
-		
-		
+		Bird bird = flightPanel.getBird();
+		BufferedImage birdImage = bird.getImage();
+		birdNestPanel = new BirdNestPanel(birdImage,LIVES-1);
+		bottomPanel.add(birdNestPanel);
+	}
+	
+	public void nextBird() {
+		birdNestPanel.removeBird();
+	}
+	
+	public void addToScore(int points) {
+		scorePanel.addToScore(points);
 	}
 
 	public static void main(String[] args) {

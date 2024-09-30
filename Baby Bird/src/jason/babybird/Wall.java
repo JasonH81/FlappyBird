@@ -1,6 +1,7 @@
 package jason.babybird;
 
 import java.awt.Color;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
@@ -27,9 +28,14 @@ public class Wall {
 	private static final int TOP_MAX = 300;
 	private static final int GAP_MIN = 100;
 	private static final int GAP_MAX = 240;
-	private Random rand = new Random();
+	private static final int POINTS_OFFSET = 80;
 	
-	public Wall() {
+	private Random rand = new Random();
+	private int points = 1;
+	private String pointsString;
+	private int pointsX;
+	
+	public Wall(FontMetrics fm) {
 		if (wallImage == null) {
 			wallImage = FileIO.readImageFile(this, WALL_IMAGE_FILE);
 			width = wallImage.getWidth();
@@ -39,6 +45,20 @@ public class Wall {
 		int range = GAP_MAX-GAP_MIN;
 		int pick = rand.nextInt(range);
 		int gap = pick + GAP_MIN;
+		
+		// calculate ratio of picked gap to possible range
+		float ratio = (float)pick / range;
+		
+		// turn ratio into number 1 to 10
+		int intValue = (int)(ratio * 10);
+		
+		// turn value into a number 10 to 1 so that
+		// smallest gap has the highest score
+		points = 10-intValue;
+		
+		pointsString = points + "";
+		int pointsWidth = fm.stringWidth(pointsString);
+		pointsX = (width/2)-(pointsWidth/2);
 		
 		range = TOP_MAX - TOP_MIN;
 		pick = rand.nextInt(range);
@@ -60,6 +80,9 @@ public class Wall {
 			g.drawImage(topImage, x, 0, null);
 			g.drawImage(bottomImage, x, bottomY, null);
 		}
+		
+		g.setColor(Color.BLACK);
+		g.drawString(pointsString, x+pointsX, bottomY+POINTS_OFFSET);
 	}
 	
 	public void move() {
@@ -81,4 +104,23 @@ public class Wall {
 		return bounds;
 	}
 	
+	public int getPoints() {
+		return points;
+	}
+	
+	public int getX() {
+		return x;
+	}
+	
+	public int getY() {
+		return 0;
+	}
+	
+	public int getWidth() {
+		return width;
+	}
+	
+	public int getChangeX() {
+		return CHANGE_X;
+	}
 }
